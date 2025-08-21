@@ -12,6 +12,9 @@ modules:
 resources:
   - key: main
     path: src/frontend/index.jsx
+permissions:
+  scopes:
+    - storage:app
 app:
   runtime:
     name: nodejs22.x
