@@ -24,6 +24,9 @@ resources:
     path: src/frontend/app-settings/index.jsx
   - key: github-panel
     path: src/frontend/github-panel/index.jsx
+permissions:
+  scopes:
+    - storage:app
 app:
   runtime:
     name: nodejs22.x
