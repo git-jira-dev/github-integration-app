@@ -1,20 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import ForgeReconciler, { Text } from '@forge/react';
-import { invoke } from '@forge/bridge';
-const App = () => {
-  const [data, setData] = useState(null);
+import React, { useEffect, useState } from "react";
+import ForgeReconciler, { Text } from "@forge/react";
+import { invoke } from "@forge/bridge";
+
+const AppSettings = () => {
+  const [tokenExists, setTokenExists] = useState(undefined);
   useEffect(() => {
-    invoke('getText', { example: 'my-invoke-variable' }).then(setData);
+    invoke("gitHubTokenExists").then(setTokenExists);
   }, []);
+
+  if (tokenExists === undefined) return <>Loading...</>;
+
   return (
     <>
-      <Text>Hello world!</Text>
-      <Text>{data ? data : 'Loading...'}</Text>
+      <Text>Token exists: {tokenExists.toString()}</Text>
     </>
   );
 };
 ForgeReconciler.render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <AppSettings />
+  </React.StrictMode>,
 );
