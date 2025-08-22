@@ -16,14 +16,17 @@ modules:
       label: GitHub pull requests
   function:
     - key: app-settings-resolver
-      handler: index.handler
+      handler: index.appSettingsHandler
     - key: github-panel-resolver
-      handler: index.handler
+      handler: index.gitHubPanelHandler
 resources:
   - key: app-settings
     path: src/frontend/app-settings/index.jsx
   - key: github-panel
     path: src/frontend/github-panel/index.jsx
+permissions:
+  scopes:
+    - storage:app
 app:
   runtime:
     name: nodejs22.x
