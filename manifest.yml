@@ -1,17 +1,29 @@
 modules:
   jira:adminPage:
-    - key: github-integration-app-hello-world-admin-page
-      resource: main
+    - key: github-integration-app-settings
+      resource: app-settings
       resolver:
-        function: resolver
+        function: app-settings-resolver
       render: native
-      title: github-integration-app
+      title: GitHub settings
+  jira:issueContext:
+    - key: github-integration-github-panel
+      resource: github-panel
+      resolver:
+        function: github-panel-resolver
+      render: native
+      title: GitHub
+      label: GitHub pull requests
   function:
-    - key: resolver
+    - key: app-settings-resolver
+      handler: index.handler
+    - key: github-panel-resolver
       handler: index.handler
 resources:
-  - key: main
-    path: src/frontend/index.jsx
+  - key: app-settings
+    path: src/frontend/app-settings/index.jsx
+  - key: github-panel
+    path: src/frontend/github-panel/index.jsx
 app:
   runtime:
     name: nodejs22.x
