@@ -1,5 +1,5 @@
 import Resolver from '@forge/resolver';
-import { storage } from '@forge/api';
+import { kvs } from '@forge/kvs';
 
 const resolver = new Resolver();
 
@@ -18,9 +18,9 @@ resolver.define('saveGitHubKey', async (req) => {
       return { success: false, message: 'No GitHub key provided' };
     }
     
-    console.log('Attempting to save githubKey to storage...');
-    await storage.set('app:github:personal-access-token', githubKey);
-    console.log('GitHub key saved successfully to storage');
+    console.log('Attempting to save githubKey to kvs...');
+    await kvs.setSecret('app:github:personal-access-token', githubKey);
+    console.log('GitHub key saved successfully to kvs');
     
     return { success: true, message: 'GitHub key saved successfully' };
   } catch (error) {
@@ -37,8 +37,8 @@ resolver.define('getGitHubKey', async (req) => {
   try {
     console.log('getGitHubKey called');
     
-    const githubKey = await storage.get('app:github:personal-access-token');
-    console.log('Retrieved githubKey from storage:', githubKey ? 'exists' : 'not found');
+    const githubKey = await kvs.getSecret('app:github:personal-access-token');
+    console.log('Retrieved githubKey from kvs:', githubKey ? 'exists' : 'not found');
     
     return { success: true, githubKey: githubKey || '' };
   } catch (error) {
@@ -53,30 +53,37 @@ resolver.define('getGitHubKey', async (req) => {
 
 resolver.define('testStorage', async (req) => {
   try {
-    console.log('Testing storage functionality...');
+    console.log('Testing kvs functionality...');
+    
+    const testValue = 'test-secret-value';
     
     // Test setting a value
-    await storage.set('test:key', 'test-value');
+    await kvs.setSecret('test:key', testValue);
     console.log('Test value set successfully');
     
     // Test getting the value
-    const testValue = await storage.get('test:key');
-    console.log('Test value retrieved:', testValue);
+    const retrievedValue = await kvs.getSecret('test:key');
+    console.log('Test value retrieved:', retrievedValue ? 'exists' : 'not found');
+    
+    // Verify the round-trip worked
+    const isValid = retrievedValue === testValue;
+    console.log('KVS round-trip test:', isValid ? 'PASSED' : 'FAILED');
     
     // Clean up
-    await storage.delete('test:key');
+    await kvs.delete('test:key');
     console.log('Test value cleaned up');
     
     return { 
       success: true, 
-      message: 'Storage test successful',
-      testValue: testValue
+      message: 'KVS test successful',
+      testValue,
+      roundTripValid: isValid
     };
   } catch (error) {
-    console.error('Storage test failed:', error);
+    console.error('KVS test failed:', error);
     return { 
       success: false, 
-      message: `Storage test failed: ${error.message}`,
+      message: `KVS test failed: ${error.message}`,
       error: error.message
     };
   }
