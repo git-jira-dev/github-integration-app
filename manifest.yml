@@ -14,11 +14,17 @@ modules:
       render: native
       title: GitHub
       label: GitHub pull requests
+  webtrigger:
+    - key: github-pr-trigger
+      function: github-webhook-fn
   function:
     - key: app-settings-resolver
       handler: index.appSettingsHandler
     - key: github-panel-resolver
       handler: index.gitHubPanelHandler
+    - key: github-webhook-fn
+      handler: webhook/github-webhook.run
+
 resources:
   - key: app-settings
     path: src/frontend/app-settings/index.jsx
@@ -27,6 +33,8 @@ resources:
 permissions:
   scopes:
     - storage:app
+    - read:jira-work
+    - write:jira-work
 app:
   runtime:
     name: nodejs22.x
