@@ -21,6 +21,7 @@
     "lint:fix"
   ],
   "dependencies": {
+    "@forge/api": "^6.1.0",
     "@forge/bridge": "5.3.0",
     "@forge/kvs": "^1.0.4",
     "@forge/react": "11.2.7",
