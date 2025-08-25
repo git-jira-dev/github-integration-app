@@ -21,6 +21,7 @@ const formContainerStyles = xcss({
 
 const AppSettings = () => {
   const [tokenPlaceholder, setTokenPlaceholder] = useState("");
+  const [webTriggerUrl, setWebTriggerUrl] = useState("");
   const [tokenExists, setTokenExists] = useState(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const { handleSubmit, register, getFieldId, formState } = useForm();
@@ -28,6 +29,7 @@ const AppSettings = () => {
 
   useEffect(() => {
     invoke("gitHubTokenExists").then(setTokenExists);
+    invoke("getWebTriggerUrl").then(setWebTriggerUrl);
   }, []);
 
   function hidePlaceholder() {
@@ -86,6 +88,8 @@ const AppSettings = () => {
           </Button>
         </FormFooter>
       </Form>
+      <Label labelFor="webhook_url">Web trigger URL</Label>
+      <Textfield id="webhook_url" value={webTriggerUrl} isReadOnly />
     </Box>
   );
 };
