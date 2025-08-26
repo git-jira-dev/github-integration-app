@@ -1,9 +1,12 @@
 import { kvs } from "@forge/kvs";
+import { GitHubApi } from "./github-api";
 
 const INSTALL_CONTEXT_NOT_FOUND =
   "Installation context is required but missing";
+const ISSUE_KEY_NOT_FOUND = "Issue key is required but missing";
 const TOKEN_NOT_FOUND = "Token not found";
 const GITHUB_TOKEN_KEY_PREFIX = "github:token:";
+const GITHUB_BASE_URL = "https://api.github.com";
 
 export const buildGithubKeyFromInstallContext = (installContext) =>
   GITHUB_TOKEN_KEY_PREFIX + installContext.replace(/\//g, "-");
@@ -69,4 +72,32 @@ export const saveToken = async (req) => {
       message: `Failed to save GitHub key`,
     };
   }
+};
+
+export const findPrsForIssue = async (req) => {
+  const issueKey = req.context.extension.issue.key;
+  if (!issueKey) {
+    console.error(ISSUE_KEY_NOT_FOUND);
+    return {
+      success: false,
+      message: `Failed to get issue key`,
+    };
+  }
+  const tokenResponse = await loadToken(req);
+  if (!tokenResponse.success) {
+    return tokenResponse;
+  }
+  const api = new GitHubApi(GITHUB_BASE_URL, tokenResponse.token);
+  const repos = await api.fetchAllRepositories();
+  const prs = await Promise.all(
+    repos.map((repo) =>
+      api.fetchPrsForRepo(repo.owner.login, repo.name, "all"),
+    ),
+  );
+  const filtered = prs.flat().filter((pr) => pr.title.includes(issueKey));
+  return {
+    success: true,
+    message: `PR received successfully successfully`,
+    prs: filtered,
+  };
 };
