@@ -34,19 +34,19 @@ const PullRequestReviewer = ({ avatar, status, username }) => (
   </Tooltip>
 );
 
-const PullRequestReviewers = ({ pr }) => {
+const PullRequestReviewers = ({ prID, prRepositoryFullName }) => {
   const [reviewers, setReviewers] = useState(undefined);
 
   useEffect(() => {
     invoke("getPrReviewers", {
-      id: pr.id,
-      full_name: pr.repository.full_name,
+      id: prID,
+      full_name: prRepositoryFullName,
     }).then((res) => {
       if (res.success) {
         setReviewers(res.reviewers);
       }
     });
-  }, [pr]);
+  }, [prID, prRepositoryFullName]);
 
   if (!reviewers) {
     return <Spinner />;

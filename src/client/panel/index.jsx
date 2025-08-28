@@ -1,8 +1,14 @@
-import ForgeReconciler, { Button, Spinner, Stack } from "@forge/react";
+import ForgeReconciler, {
+  Button,
+  SectionMessage,
+  Spinner,
+  Stack,
+  Text,
+} from "@forge/react";
 import React, { useEffect, useState } from "react";
 import { invoke } from "@forge/bridge";
-import { PullRequests } from "./pull-requests";
-import PullRequestsModal from "./pull-requests-modal";
+import { PullRequests } from "../settings/components/pull-requests";
+import PullRequestsModal from "../settings/components/pull-requests-modal";
 
 function mapPrs(prs) {
   return prs.map((pr) => ({
@@ -23,8 +29,29 @@ const GitHubPanel = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   useEffect(() => {
     invoke("gitHubTokenExists").then(setTokenExists);
-    invoke("getPrsForTicket").then((res) => setPrs(mapPrs(res.prs)));
   }, []);
+
+  useEffect(() => {
+    if (tokenExists) {
+      invoke("getPrsForTicket").then((res) => {
+        if (res.success) {
+          setPrs(mapPrs(res.prs));
+        }
+      });
+    }
+  }, [tokenExists]);
+
+  if (tokenExists === false) {
+    return (
+      <SectionMessage appearance="error">
+        <Text>
+          No token specified. Please navigate to App Settings and enter your
+          token.
+        </Text>
+      </SectionMessage>
+    );
+  }
+
   if (tokenExists === undefined || prs === undefined) return <Spinner />;
 
   return (

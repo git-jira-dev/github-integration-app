@@ -1,6 +1,6 @@
 import api, { route } from "@forge/api";
 
-export const run = async ({ body }, context) => {
+export const run = async ({ body }) => {
   const payload = JSON.parse(body);
 
   if (!isPRClosedOrMerged(payload)) {

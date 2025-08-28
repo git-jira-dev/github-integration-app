@@ -8,20 +8,18 @@ export const PullRequests = ({ prs }) => {
     undefined,
   );
   return (
-    <>
-      <Inline space="space.100">
+    <Inline space="space.100">
+      <Box>
+        <Text weight="bold">{prs.length}</Text>
+      </Box>
+      <Box>
+        <Text>Pull requests</Text>
+      </Box>
+      {latest && (
         <Box>
-          <Text weight="bold">{prs.length}</Text>
+          <PullRequestStatus pr={latest} />
         </Box>
-        <Box>
-          <Text>Pull requests</Text>
-        </Box>
-        {latest && (
-          <Box>
-            <PullRequestStatus pr={latest} />
-          </Box>
-        )}
-      </Inline>
-    </>
+      )}
+    </Inline>
   );
 };

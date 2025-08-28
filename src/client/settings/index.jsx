@@ -55,13 +55,15 @@ const AppSettings = () => {
   };
 
   const saveSettings = ({ token }) => {
-    invoke("saveGitHubToken", { githubKey: token }).then((result) => {
-      if (!result.success) {
-        flag({ type: "error", title: result.message, isAutoDismiss: false });
-      } else {
-        flag({ type: "info", title: "GitHub settings have been updated" });
-      }
-    });
+    if (token) {
+      invoke("saveGitHubToken", { token: token }).then((result) => {
+        if (!result.success) {
+          flag({ type: "error", title: result.message, isAutoDismiss: false });
+        } else {
+          flag({ type: "info", title: "GitHub settings have been updated" });
+        }
+      });
+    }
   };
 
   if (isLoading) return <Spinner />;
@@ -75,12 +77,14 @@ const AppSettings = () => {
             <RequiredAsterisk />
           </Label>
           <Textfield
-            {...register("token", { required: true })}
+            {...register("token", { required: !tokenExists })}
             placeholder={tokenPlaceholder}
             onFocus={hidePlaceholder}
             type="password"
           />
           {errors["token"] && <ErrorMessage>Please enter a token</ErrorMessage>}
+          <Label labelFor="webhook_url">Web trigger URL</Label>
+          <Textfield id="webhook_url" value={webTriggerUrl} isReadOnly />
         </FormSection>
         <FormFooter>
           <Button appearance="primary" type="submit">
@@ -88,8 +92,6 @@ const AppSettings = () => {
           </Button>
         </FormFooter>
       </Form>
-      <Label labelFor="webhook_url">Web trigger URL</Label>
-      <Textfield id="webhook_url" value={webTriggerUrl} isReadOnly />
     </Box>
   );
 };

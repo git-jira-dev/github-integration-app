@@ -1,23 +1,35 @@
 import { fetch } from "@forge/api";
+import StorageService from "./storage-service";
+import { GITHUB_BASE_URL } from "../../common/constants";
 
-export class GitHubApi {
-  constructor(url, token) {
-    this.url = url;
-    this.token = token;
-  }
-
-  async fetchPrReviewers(id, full_repo_name) {
-    return this.baseRequest({
-      path: `/repos/${full_repo_name}/pulls/${id}/reviews`,
-    });
+class GitHubService {
+  async findPrsForIssue(issueKey) {
+    const repos = await this.fetchAllRepositories();
+    const prs = await Promise.all(
+      repos.map((repo) =>
+        this.fetchPrsForRepo(repo.owner.login, repo.name, "all"),
+      ),
+    );
+    return prs.flat().filter((pr) => pr.title.includes(issueKey));
   }
 
   fetchPrsForRepo(owner, repo, state = "open") {
     return this.getPaginatedData(`/repos/${owner}/${repo}/pulls`, { state });
   }
 
+  fetchPrReviewers(id, full_repo_name) {
+    console.log({ id, full_repo_name });
+    return this.baseRequest({
+      path: `/repos/${full_repo_name}/pulls/${id}/reviews`,
+    });
+  }
+
   fetchAllRepositories() {
     return this.getPaginatedData("/user/repos");
+  }
+
+  fetchUserInfo() {
+    return this.baseRequest({ path: "/user" });
   }
 
   async getPaginatedData(path, params) {
@@ -32,10 +44,9 @@ export class GitHubApi {
           ...params,
         },
       });
-      const json = await response.json();
-      const parsedData = this.parseData(json);
+      const parsedData = this.parseData(response);
       data = [...data, ...parsedData];
-      const linkHeader = response.headers.link;
+      const linkHeader = response.headers?.link;
       pagesRemaining = linkHeader && linkHeader.includes(`rel="next"`);
 
       if (pagesRemaining) {
@@ -49,17 +60,12 @@ export class GitHubApi {
     if (Array.isArray(data)) {
       return data;
     }
-    // Some endpoints respond with 204 No Content instead of empty array
-    //   when there is no data. In that case, return an empty array.
-    if (!data) {
-      return [];
-    }
-    return data;
+    return data ?? [];
   }
 
-  buildPath(path, extraParams = {}) {
+  buildPath = (path, extraParams = {}) => {
     const isAbsolute = /^https?:\/\//i.test(path);
-    const url = new URL(path, this.url);
+    const url = new URL(path, GITHUB_BASE_URL);
 
     for (const [k, v] of Object.entries(extraParams)) {
       if (v !== undefined && v !== null) {
@@ -67,18 +73,22 @@ export class GitHubApi {
       }
     }
     return isAbsolute ? url.toString() : url.pathname + url.search;
-  }
+  };
 
-  baseRequest({ path, method = "GET", headers = {}, params = {} }) {
+  async baseRequest({ path, method = "GET", headers = {}, params = {} }) {
+    const token = await StorageService.loadToken();
     const pathWithParams = this.buildPath(path, params);
-    return fetch(this.url + pathWithParams, {
+    const response = await fetch(GITHUB_BASE_URL + pathWithParams, {
       method,
       headers: {
         Accept: "application/vnd.github+json",
-        Authorization: `Bearer ${this.token}`,
+        Authorization: `Bearer ${token}`,
         "X-GitHub-Api-Version": "2022-11-28",
         ...headers,
       },
     });
+    return response.json();
   }
 }
+
+export default new GitHubService();

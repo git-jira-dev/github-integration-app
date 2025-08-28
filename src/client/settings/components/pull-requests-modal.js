@@ -13,7 +13,7 @@ import {
 } from "@forge/react";
 import React from "react";
 import { PullRequestStatus } from "./pull-request-status";
-import TimeStampFormatter from "./date-formatter";
+import TimeStampFormatter from "../../../../common/utils/date-formatter";
 import Avatar from "./avatar";
 import PullRequestReviewers from "./pull-request-reviewers";
 
@@ -91,7 +91,12 @@ export const PullRequestsModal = ({ prs, modalIsOpen, closeModal }) => {
       },
       {
         key: "reviewer",
-        content: <PullRequestReviewers pr={pr} />,
+        content: (
+          <PullRequestReviewers
+            prID={pr.id}
+            prRepositoryFullName={pr.repository.full_name}
+          />
+        ),
       },
       {
         key: "updated",
