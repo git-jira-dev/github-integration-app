@@ -6,6 +6,12 @@ export class GitHubApi {
     this.token = token;
   }
 
+  async fetchPrReviewers(id, full_repo_name) {
+    return this.baseRequest({
+      path: `/repos/${full_repo_name}/pulls/${id}/reviews`,
+    });
+  }
+
   fetchPrsForRepo(owner, repo, state = "open") {
     return this.getPaginatedData(`/repos/${owner}/${repo}/pulls`, { state });
   }

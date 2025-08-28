@@ -1,5 +1,5 @@
 import { kvs } from "@forge/kvs";
-import { GitHubApi } from "./github-api";
+import { GitHubApi } from "../api/github-api";
 
 const INSTALL_CONTEXT_NOT_FOUND =
   "Installation context is required but missing";
@@ -72,6 +72,27 @@ export const saveToken = async (req) => {
       message: `Failed to save GitHub key`,
     };
   }
+};
+
+export const findReviewersForPr = async (req) => {
+  const tokenResponse = await loadToken(req);
+  if (!tokenResponse.success) {
+    return tokenResponse;
+  }
+  const { id, full_name } = req.payload;
+  const api = new GitHubApi(GITHUB_BASE_URL, tokenResponse.token);
+  const response = await api.fetchPrReviewers(id, full_name);
+  if (!response.ok) {
+    console.error("Failed to fetch reviewers", response);
+    return {
+      success: false,
+    };
+  }
+  const reviewers = await response.json();
+  return {
+    success: true,
+    reviewers,
+  };
 };
 
 export const findPrsForIssue = async (req) => {
