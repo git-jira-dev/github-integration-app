@@ -27,15 +27,17 @@ modules:
 
 resources:
   - key: app-settings
-    path: src/frontend/app-settings/index.jsx
+    path: src/client/settings/index.jsx
   - key: github-panel
-    path: src/frontend/github-panel/index.jsx
+    path: src/client/panel/index.jsx
 permissions:
   scopes:
     - storage:app
     - read:jira-work
     - write:jira-work
   external:
+    images:
+      - address: https://avatars.githubusercontent.com
     fetch:
       backend:
         - address: api.github.com

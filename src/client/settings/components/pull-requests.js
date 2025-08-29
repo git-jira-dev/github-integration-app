@@ -1,15 +1,6 @@
-import { Box, Inline, Lozenge, Text } from "@forge/react";
+import { Box, Inline, Text } from "@forge/react";
 import React from "react";
-
-const statusMap = {
-  OPEN: "inprogress",
-  MERGED: "success",
-  DECLINED: "removed",
-};
-
-function mapStatus(status) {
-  return statusMap[status] ?? "default";
-}
+import { PullRequestStatus } from "./pull-request-status";
 
 export const PullRequests = ({ prs }) => {
   const latest = prs?.reduce(
@@ -26,9 +17,7 @@ export const PullRequests = ({ prs }) => {
       </Box>
       {latest && (
         <Box>
-          <Lozenge appearance={mapStatus(latest.status)} isBold>
-            {latest.status}
-          </Lozenge>
+          <PullRequestStatus pr={latest} />
         </Box>
       )}
     </Inline>
