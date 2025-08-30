@@ -1,36 +1,149 @@
-# Forge Hello World
+# Github integration app
+![Vite](https://img.shields.io/badge/Vite-gray?logo=vite)
+![React](https://img.shields.io/badge/React-gray?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-gray?logo=typescript)
+![ESLint](https://img.shields.io/badge/ESLint-gray?logo=eslint)
+![Vitest](https://img.shields.io/badge/Vitest-unit--tests-6E9F18?logo=vitest)
+![Playwright](https://img.shields.io/badge/Playwright-e2e--tests-45BA6E)
 
-This project contains a Forge app written in Javascript that displays `Hello World!` in a Jira admin page. 
+🔍 Streamline your development workflow with this Forge app that seamlessly integrates GitHub pull requests into your Jira experience. The app adds a dedicated panel to your Jira issues, providing real-time visibility into associated pull requests and their current status.
 
-See [developer.atlassian.com/platform/forge/](https://developer.atlassian.com/platform/forge) for documentation and tutorials explaining Forge.
 
-## Requirements
+## Getting Started
 
-See [Set up Forge](https://developer.atlassian.com/platform/forge/set-up-forge/) for instructions to get set up.
+### 0. Prerequisites
 
-## Quick start
+Before you begin, ensure you have the following installed:
 
-- Modify your app frontend by editing the `src/frontend/index.jsx` file.
+1. [Node.js](https://nodejs.org/en/download/package-manager)
+2. [Yarn](https://yarnpkg.com/)
+3. [Forge CLI](https://developer.atlassian.com/platform/forge/getting-started/)
 
-- Modify your app backend by editing the `src/resolvers/index.js` file to define resolver functions. See [Forge resolvers](https://developer.atlassian.com/platform/forge/runtime-reference/custom-ui-resolver/) for documentation on resolver functions.
+### 1. Install Dependencies
 
-- Build and deploy your app by running:
-```
-forge deploy
-```
+Run the following command to install the necessary dependencies:
 
-- Install your app in an Atlassian site by running:
-```
-forge install
-```
-
-- Develop your app by running `forge tunnel` to proxy invocations locally:
-```
-forge tunnel
+```bash
+yarn install
 ```
 
-### Notes
-- Use the `forge deploy` command when you want to persist code changes.
-- Use the `forge install` command when you want to install the app on a new site.
-- Once the app is installed on a site, the site picks up the new app changes you deploy without needing to rerun the install command.
+### 2. Initial Build
 
+To create the initial build, run one of the following commands, depending on the app version you'd like to start with:
+- `yarn build:jira` - For Jira app version
+
+### 3. Register, Deploy, Install
+
+#### Register the app with Forge:
+- `yarn forge:register:jira` - For Jira version
+
+#### Deploy to Forge
+
+Deploy the app to the development environment:
+- `yarn forge:deploy:jira` - For Jira version
+
+#### Install the App on Your Cloud Instance
+
+Install the app on your cloud instance by running:
+- `yarn forge:install:jira` - For Jira version
+
+Follow the on-screen instructions to complete the process. 
+The Forge app should now be installed from the development environment and available on your cloud instance.
+
+
+## Available Scripts and additional parameters
+
+### Deploy
+
+To deploy to another environment (e.g., staging or production), append the environment flag:
+- `yarn forge:deploy:jira -e staging`    - For staging
+- `yarn forge:deploy:jira -e production` - For production
+### Test
+
+`yarn test`
+
+
+### Lint
+
+- Check for linting issues:
+  ```bash
+  yarn lint
+  ```
+- Automatically fix linting issues:
+  ```bash
+  yarn lint:fix
+  ```
+
+
+# Development Workflow
+
+Once the app is installed (see Getting Started), follow this development loop:
+
+1. Start the Custom UI with hot reloading and establish a Forge tunnel to redirect requests to localhost:
+    ```bash
+    yarn dev:jira   # For Jira version
+    ```
+2. Make changes to your app and enjoy instant feedback with hot-reloading.
+3. After major changes to the `manifest.yml`, deploy and reinstall the app:
+  - `yarn forge:deploy:jira` - For Jira version
+  - `yarn forge:install:jira --upgrade` - For Jira version
+
+# Folders structure
+
+```bash
+└── packages # all workspaces of your monorepo project
+    └── forge-jira # Jira Forge app
+        ├── manifest.yml # main manifest file
+        └── src # Forge FAAS, resolvers, UI Kit modules, web triggers, custom fields, workflow postfunctions, and so on
+        └── ...
+    └── shared # shared types, consts
+        └── ...
+    └── ui # Custom UI for all apps
+        └── ...
+    └── e2e # E2E tests for ui
+        └── ...
+└── .gitignore
+└── eslint.config.js # Single eslint config file for all apps
+└── tsconfig.base.json # Base TypeScript config file for all apps
+└── package.json # overall workspace configuration and dependencies
+```
+
+# FAQ
+
+<details>
+  <summary><strong>Why is my app NOT eligible for the Runs on Atlassian program?</strong></summary>
+
+  **Short answer:**  
+  Your app's manifest file (`manifest.yml`) must not include any entries under the `permissions -> external` section.
+
+  For more details about the Runs on Atlassian program, please visit the [https://go.atlassian.com/runs-on-atlassian](https://go.atlassian.com/runs-on-atlassian).
+</details>
+
+<details>
+  <summary><strong>Dev Routines</strong></summary>
+
+   1. **Upgrade dependencies interactively**  
+    Use [`yarn upgrade-interactive`](https://classic.yarnpkg.com/en/docs/cli/upgrade-interactive/) to update your dependencies to the latest versions in a controlled way.
+   2. **Find unused files, dependencies, and exports**  
+    Use `yarn knip` to detect unused code. ⚠️ *Note: There may be false positives — review the results carefully before removing anything.*
+   3. **Refresh the lockfile**  
+    Run `yarn install --refresh-lockfile` to regenerate the `yarn.lock` file.  
+    This is helpful for:
+      - Upgrading Yarn versions
+      - Fixing "ghost" dependencies stuck in the lockfile
+   4. **Visualize your Vite bundle**  
+    Use `npx vite-bundle-visualizer` to analyze and optimize your Vite build output. 
+
+</details>
+
+<details>
+  <summary><strong>UI Kit is not compatible with React 19</strong></summary>
+
+  This is a known issue — Atlassian is gradually updating UI Kit to support newer versions of React, but as of now, only React 18 is officially supported. 
+
+</details>
+
+
+# License
+
+This project is licensed under the MIT License.

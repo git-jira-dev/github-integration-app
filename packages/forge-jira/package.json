@@ -1,0 +1,22 @@
+{
+  "name": "@app/forge-jira",
+  "version": "0.0.0",
+  "main": "index.ts",
+  "private": true,
+  "scripts": {
+    "dev:jira": "forge tunnel",
+    "deploy": "forge deploy",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix"
+  },
+  "dependencies": {
+    "@app/shared": "workspace:^",
+    "@forge/api": "^6.0.3",
+    "@forge/bridge": "^5.2.0",
+    "@forge/events": "^2.0.3",
+    "@forge/kvs": "^1.0.4",
+    "@forge/react": "^11.2.6",
+    "@forge/resolver": "1.6.16",
+    "react": "18.3.1"
+  }
+}

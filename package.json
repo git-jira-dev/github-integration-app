@@ -1,31 +1,35 @@
 {
-  "name": "jira-admin-page-ui-kit",
-  "version": "1.1.18",
-  "main": "index.js",
+  "name": "@app/root",
+  "version": "0.0.0",
   "license": "MIT",
   "private": true,
+  "type": "module",
+  "packageManager": "yarn@4.9.2",
   "scripts": {
-    "lint": "eslint 'src/**/*' --max-warnings=0",
-    "lint:fix": "npm run lint -- --fix"
-  },
-  "devDependencies": {
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "pre-commit": "^1.2.2",
-    "prettier": "^3.6.2"
+    "dev:jira": "yarn workspaces foreach -A -p -v -i run dev:jira",
+    "build:jira": "yarn workspace @app/ui build:jira",
+    "forge:register:jira": "cd ./packages/forge-jira && forge register",
+    "forge:deploy:jira": "yarn build:jira && yarn workspace @app/forge-jira deploy",
+    "forge:install:jira": "cd ./packages/forge-jira && forge install",
+    "test:jira": "yarn workspaces foreach -A -p -v -i run test:jira",
+    "lint": "yarn workspaces foreach -A -p -v -i run lint",
+    "lint:fix": "yarn workspaces foreach -A -p -v -i run lint:fix",
+    "knip": "knip"
   },
   "pre-commit": [
     "lint:fix"
   ],
-  "dependencies": {
-    "@forge/api": "^6.1.0",
-    "@forge/bridge": "5.3.0",
-    "@forge/kvs": "^1.0.4",
-    "@forge/react": "11.2.7",
-    "@forge/resolver": "1.7.0",
-    "react": "^18.2.0"
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@stylistic/eslint-plugin": "^5.2.3",
+    "eslint": "^9.33.0",
+    "knip": "^5.62.0",
+    "pre-commit": "^1.2.2",
+    "typescript-eslint": "^8.39.1"
   }
 }

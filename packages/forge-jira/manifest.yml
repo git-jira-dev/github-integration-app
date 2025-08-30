@@ -1,0 +1,70 @@
+modules:
+  jira:adminPage:
+    - key: github-integration-app-settings
+      resource: uikit
+      resolver:
+        function: resolver
+      render: native
+      title: GitHub integration settings
+      icon: resource:ui;icons/github-mark.svg
+  jira:issueContext:
+    - key: github-integration-github-panel
+      resource: ui
+      resolver:
+        function: resolver
+      title: GitHub
+      label: GitHub pull requests
+      icon: resource:ui;icons/github-mark.svg
+  webtrigger:
+    - key: github-pr-trigger
+      function: github-webhook-fn
+  function:
+    - key: resolver
+      handler: index.handler
+    - key: github-webhook-fn
+      handler: webhook/github-webhook.run
+resources:
+  - key: uikit # UI Kit example
+    path: src/frontend/index.tsx
+  - key: ui # Custom UI example
+    path: ../ui/build
+    tunnel:
+      port: 3003
+permissions:
+  scopes:
+    # https://developer.atlassian.com/platform/forge/manifest-reference/scopes-product-jira/
+    # Jira core
+    - read:jira-work
+    - write:jira-work
+    # Cross apps
+    - storage:app
+  content:
+    # https://developer.atlassian.com/platform/forge/manifest-reference/permissions/#content-permissions
+    scripts:
+      - unsafe-inline
+      - unsafe-hashes
+      - unsafe-eval
+    styles:
+      - unsafe-inline
+  external:
+    images:
+      - "*"
+    scripts:
+      - "*"
+    styles:
+      - "*"
+    fonts:
+      - "*"
+    frames:
+      - "*"
+    media:
+      - "*"
+    fetch:
+      backend:
+        - "*"
+      client:
+        - "*"
+app:
+  id: ari:cloud:ecosystem::app/b4ccf637-5941-45a8-8a7d-f6f39faf3b1a
+  runtime:
+    name: nodejs22.x
