@@ -87,7 +87,7 @@ class GithubService {
     return await fetch(url, {
       method: method ?? 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${token ?? ''}`,
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json',
         ...headers,
@@ -106,11 +106,7 @@ class GithubService {
   }
 
   async getGitHubToken() {
-    const token = await StorageService.loadToken();
-    if (!token) {
-      throw new Error('GitHub token not found');
-    }
-    return token;
+    return await StorageService.loadToken();
   }
 }
 
