@@ -1,0 +1,26 @@
+{
+  "name": "@app/shared",
+  "version": "0.0.0",
+  "main": "./src/index.ts",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix"
+  },
+  "directories": {
+    "src": "src"
+  },
+  "devDependencies": {
+    "@octokit/types": "^14.1.0",
+    "@octokit/webhooks-types": "^7.6.1",
+    "@types/react": "^19.1.10",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@forge/api": "^6.0.3",
+    "@forge/bridge": "^5.2.0",
+    "@forge/events": "^2.0.3",
+    "@forge/react": "^11.2.6",
+    "@forge/resolver": "^1.6.16"
+  }
+}
